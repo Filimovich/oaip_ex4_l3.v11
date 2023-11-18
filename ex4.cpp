@@ -1,9 +1,76 @@
 #include <iostream>
 #include <cmath>
+#include <climits>
 
 using namespace std;
 
-int calculate_ranks(unsigned int num)
+double* create_array(unsigned num);
+unsigned digit_input();
+int calculate_ranks(unsigned num);
+void input_error(void);
+void inputOutOfRange_error();
+
+int main()
+{
+	unsigned number = digit_input();
+	cout << number << endl;
+	double *arrayPtr = create_array(number);
+
+	for (int i = arrayPtr[0]; i > 0; i--) {
+		cout << *arrayPtr - i + 1 << " rank of the given number: " << arrayPtr[i] << endl;
+	}
+
+	return (0);
+}
+
+unsigned digit_input()
+{
+	double digit;
+	while(1) {
+		string str;
+		size_t pos{};
+		cin >> str;
+		try {
+			digit = stod(str, &pos);
+			if (cin && pos == str.size())
+				break;
+			else
+				input_error();
+		}
+		catch (invalid_argument const&) {
+			input_error();
+		}
+		catch (out_of_range const&) {
+			inputOutOfRange_error();
+		}
+	}
+
+	if (fabs(digit) > UINT_MAX) {
+		inputOutOfRange_error();
+		return (digit_input());
+	}
+
+	if (digit < 0)
+		return (fabs(digit));
+
+	return (digit);
+}
+
+void input_error(void)
+{
+	cout << "Input data type error. Try again." << endl;
+	cin.clear();
+	cin.ignore(1000, '\n');
+}
+
+void inputOutOfRange_error()
+{
+	cout << "Out of range error. Try again." << endl;
+	cin.clear();
+	cin.ignore(1000, '\n');
+}
+
+int calculate_ranks(long num)
 {
 	int i;
 
@@ -14,7 +81,7 @@ int calculate_ranks(unsigned int num)
 	return (i);
 }
 
-double* createArray(unsigned int num)
+double* create_array(long num)
 {
 	int arraySize = calculate_ranks(num);
 	int numRank = 1;
@@ -30,63 +97,3 @@ double* createArray(unsigned int num)
 
 	return (array);
 }
-
-int main()
-{
-	unsigned int number = 1242323344;
-	double *arrayPtr = createArray(number);
-
-	for (int i = arrayPtr[0]; i > 0; i--) {
-		cout << *arrayPtr - i + 1 << " rank of the given number: " << arrayPtr[i] << endl;
-	}
-
-	return (0);
-}
-
-/*
-#include <iostream>
-#include <cmath>
-
-using namespace std;
-
-int calculate_ranks(int num)
-{
-	int i;
-
-	for (i = 0; num > 0; ++i) {
-		num /= 10;
-	}
-
-	return (i);
-}
-
-int* createArray(int num)
-{
-	int arraySize;
-
-	arraySize = calculate_ranks(num);
-
-	int* array = new int[arraySize];
-
-	for (int i = arraySize; i >= 1; i--) {
-		array[i] = pow((num % 10), 2);
-		num /= 10;
-	}
-
-	array[0] = arraySize;
-
-	return (array);
-}
-
-int main()
-{
-	int number = 35412;
-	int *array = createArray(number);
-
-	for (int i = 1; i <= array[0]; i++) {
-		cout << array[i] << endl;
-	}
-
-	return (0);
-}
-*/
